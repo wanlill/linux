@@ -617,6 +617,7 @@ static int msix_setup_msi_descs(struct pci_dev *dev, struct msix_entry *entries,
 
 	for (i = 0, curmsk = masks; i < nvec; i++, curmsk++) {
 		desc.msi_index = entries ? entries[i].entry : i;
+		printk(KERN_ERR "debugggg msix_setup_msi_descs msi_index %d\n", desc.msi_index);
 		desc.affinity = masks ? curmsk : NULL;
 		desc.pci.msi_attrib.is_virtual = desc.msi_index >= vec_count;
 
@@ -703,6 +704,8 @@ static int msix_capability_init(struct pci_dev *dev, struct msix_entry *entries,
 {
 	int ret, tsize;
 	u16 control;
+
+	printk(KERN_ERR "debugggg msix_capability_init nvec %d", nvec);
 
 	/*
 	 * Some devices require MSI-X to be enabled before the MSI-X

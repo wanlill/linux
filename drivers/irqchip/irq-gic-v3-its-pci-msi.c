@@ -57,6 +57,8 @@ static int its_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
 	struct msi_domain_info *msi_info;
 	int alias_count = 0, minnvec = 1;
 
+	printk(KERN_ERR "debugggg its_pci_msi_prepare nvec %d\n", nvec);
+
 	if (!dev_is_pci(dev))
 		return -EINVAL;
 

@@ -218,6 +218,9 @@ static int rockchip_pcie_rd_conf(struct pci_bus *bus, u32 devfn, int where,
 {
 	struct rockchip_pcie *rockchip = bus->sysdata;
 
+    /* printk(KERN_ERR "debugggg bus bus num %d, primary %d, devfn 0x%08x, where %d, size %d\n", */
+    /*        bus->number, bus->primary, devfn, where, size); */
+
 	if (!rockchip_pcie_valid_device(rockchip, bus, PCI_SLOT(devfn)))
 		return PCIBIOS_DEVICE_NOT_FOUND;
 

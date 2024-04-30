@@ -69,6 +69,7 @@ static void pci_msi_domain_set_desc(msi_alloc_info_t *arg,
 {
 	arg->desc = desc;
 	arg->hwirq = pci_msi_domain_calc_hwirq(desc);
+	printk(KERN_ERR "debugggg pci_msi_domain_set_desc arg->hwirq %lu\n", arg->hwirq);
 }
 
 static struct msi_domain_ops pci_msi_domain_ops_default = {
@@ -146,6 +147,7 @@ static void pci_device_domain_set_desc(msi_alloc_info_t *arg, struct msi_desc *d
 {
 	arg->desc = desc;
 	arg->hwirq = desc->msi_index;
+	printk(KERN_ERR "debugggg pci_device_domain_set_desc arg->hwirq %lu\n", arg->hwirq);
 }
 
 static void pci_irq_mask_msi(struct irq_data *data)

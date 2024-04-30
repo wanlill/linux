@@ -1366,6 +1366,9 @@ int irq_domain_set_hwirq_and_chip(struct irq_domain *domain, unsigned int virq,
 {
 	struct irq_data *irq_data = irq_domain_get_irq_data(domain, virq);
 
+	printk(KERN_ERR "debugggg mapping virq %u to hwirq %lu, chip %s\n",
+		   virq, hwirq, chip->name);
+
 	if (!irq_data)
 		return -ENOENT;
 

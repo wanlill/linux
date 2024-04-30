@@ -757,6 +757,8 @@ static int msi_domain_ops_init(struct irq_domain *domain,
 			       unsigned int virq, irq_hw_number_t hwirq,
 			       msi_alloc_info_t *arg)
 {
+	printk(KERN_ERR "debugggg msi_domain_ops_init mapping virq %u to hwirq %lu, chip %s\n",
+		   virq, hwirq, info->chip->name);
 	irq_domain_set_hwirq_and_chip(domain, virq, hwirq, info->chip,
 				      info->chip_data);
 	if (info->handler && info->handler_name) {
@@ -1256,7 +1258,10 @@ static int __msi_domain_alloc_irqs(struct device *dev, struct irq_domain *domain
 	unsigned long idx;
 	int i, ret, virq;
 
+	printk(KERN_ERR "debugggg __msi_domain_alloc_irqs nirqs %d\n", ctrl->nirqs);
+
 	ret = msi_domain_prepare_irqs(domain, dev, ctrl->nirqs, &arg);
+
 	if (ret)
 		return ret;
 
@@ -1285,9 +1290,9 @@ static int __msi_domain_alloc_irqs(struct device *dev, struct irq_domain *domain
 
 		if (ops->prepare_desc)
 			ops->prepare_desc(domain, &arg, desc);
-
+		printk(KERN_ERR "debugggg set_desc entry hwirq %lu\n", arg.hwirq);
 		ops->set_desc(&arg, desc);
-
+		printk(KERN_ERR "debugggg set_desc after hwirq %lu\n", arg.hwirq);
 		virq = __irq_domain_alloc_irqs(domain, -1, desc->nvec_used,
 					       dev_to_node(dev), &arg, false,
 					       desc->affinity);

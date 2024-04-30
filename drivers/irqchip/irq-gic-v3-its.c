@@ -2078,6 +2078,7 @@ static int alloc_lpi_range(u32 nr_lpis, u32 *base)
 
 	mutex_unlock(&lpi_range_lock);
 
+	printk(KERN_ERR "debugggg alloc_lpi_range base %u\n", *base);
 	pr_debug("ITS: alloc %u:%u\n", *base, nr_lpis);
 	return err;
 }
@@ -2130,6 +2131,7 @@ static int free_lpi_range(u32 base, u32 nr_lpis)
 static int __init its_lpi_init(u32 id_bits)
 {
 	u32 lpis = (1UL << id_bits) - 8192;
+	printk(KERN_ERR "debugggg its_lpi_init lpis %u\n", lpis);
 	u32 numlpis;
 	int err;
 
@@ -3409,11 +3411,15 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
 	int nr_ites;
 	int sz;
 
+	printk(KERN_ERR "debugggg its_create_device dev_id 0x%08x, nvecs %d\n", dev_id, nvecs);
+
 	if (!its_alloc_device_table(its, dev_id))
 		return NULL;
 
 	if (WARN_ON(!is_power_of_2(nvecs)))
 		nvecs = roundup_pow_of_two(nvecs);
+
+	printk(KERN_ERR "debugggg its_create_device dev_id 0x%08x, rounded nvecs %d\n", dev_id, nvecs);
 
 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
 	/*
@@ -3451,6 +3457,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
 	dev->event_map.lpi_map = lpi_map;
 	dev->event_map.col_map = col_map;
 	dev->event_map.lpi_base = lpi_base;
+	printk(KERN_ERR "debugggg its_create_device base %lu\n", dev->event_map.lpi_base);
 	dev->event_map.nr_lpis = nr_lpis;
 	raw_spin_lock_init(&dev->event_map.vlpi_lock);
 	dev->device_id = dev_id;
@@ -3491,6 +3498,8 @@ static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number
 
 	*hwirq = dev->event_map.lpi_base + idx;
 
+	printk(KERN_ERR "its_alloc_device_irq lpi_base %lu, idx %d, hwirq %lu\n", dev->event_map.lpi_base, idx, *hwirq);
+
 	return 0;
 }
 
@@ -3502,6 +3511,8 @@ static int its_msi_prepare(struct irq_domain *domain, struct device *dev,
 	struct msi_domain_info *msi_info;
 	u32 dev_id;
 	int err = 0;
+
+	printk(KERN_ERR "debugggg its_msi_prepare nvec %d\n", nvec);
 
 	/*
 	 * We ignore "dev" entirely, and rely on the dev_id that has
@@ -3604,6 +3615,9 @@ static int its_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
 		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq + i);
 		if (err)
 			return err;
+
+		printk(KERN_ERR "debugggg its_irq_domain_alloc mapping virq %u to hwirq %lu, chip %s\n",
+			   virq + i, hwirq + i, its_irq_chip.name);
 
 		irq_domain_set_hwirq_and_chip(domain, virq + i,
 					      hwirq + i, &its_irq_chip, its_dev);
