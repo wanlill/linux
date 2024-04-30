@@ -2063,8 +2063,13 @@ static int alloc_lpi_range(u32 nr_lpis, u32 *base)
 	list_for_each_entry_safe(range, tmp, &lpi_range_list, entry) {
 		if (range->span >= nr_lpis) {
 			*base = range->base_id;
+
+			printk(KERN_ERR "debugggg using range base %u, span %u\n", range->base_id, range->span);
+
 			range->base_id += nr_lpis;
 			range->span -= nr_lpis;
+
+			printk(KERN_ERR "debugggg post usage range base %u, span %u\n", range->base_id, range->span);
 
 			if (range->span == 0) {
 				list_del(&range->entry);
@@ -2074,6 +2079,8 @@ static int alloc_lpi_range(u32 nr_lpis, u32 *base)
 			err = 0;
 			break;
 		}
+
+		printk(KERN_ERR "debugggg ignored range base %u, span %u\n", range->base_id, range->span);
 	}
 
 	mutex_unlock(&lpi_range_lock);

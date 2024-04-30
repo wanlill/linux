@@ -941,6 +941,8 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
 	if (!bridge)
 		return -ENOMEM;
 
+	printk(KERN_ERR "debugggg after devm_pci_alloc_host_bridge bridge->dev.msi.domain %px\n", bridge->dev.msi.domain);
+
 	rockchip = pci_host_bridge_priv(bridge);
 
 	platform_set_drvdata(pdev, rockchip);
@@ -988,7 +990,12 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
 
 	rockchip_pcie_enable_interrupts(rockchip);
 
+	printk(KERN_ERR "debugggg before pci_host_probe bridge->dev.msi.domain %px\n", bridge->dev.msi.domain);
+
 	err = pci_host_probe(bridge);
+
+	printk(KERN_ERR "debugggg after pci_host_probe bridge->dev.msi.domain %px\n", bridge->dev.msi.domain);
+
 	if (err < 0)
 		goto err_remove_irq_domain;
 

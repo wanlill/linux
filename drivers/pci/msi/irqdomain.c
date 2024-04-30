@@ -13,8 +13,10 @@ int pci_msi_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
 	struct irq_domain *domain;
 
 	domain = dev_get_msi_domain(&dev->dev);
-	if (domain && irq_domain_is_hierarchy(domain))
+	if (domain && irq_domain_is_hierarchy(domain)) {
+		printk(KERN_ERR "debugggg pci_msi_setup_msi_irqs domain is %px\n", domain);
 		return msi_domain_alloc_irqs_all_locked(&dev->dev, MSI_DEFAULT_DOMAIN, nvec);
+	}
 
 	return pci_msi_legacy_setup_msi_irqs(dev, nvec, type);
 }

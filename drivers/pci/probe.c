@@ -844,14 +844,20 @@ static struct irq_domain *pci_host_bridge_msi_domain(struct pci_bus *bus)
 	/* If the host bridge driver sets a MSI domain of the bridge, use it */
 	d = dev_get_msi_domain(bus->bridge);
 
+	printk(KERN_ERR "debugggg pci_host_bridge_msi_domain from bus->bridge %px\n", d);
+
 	/*
 	 * Any firmware interface that can resolve the msi_domain
 	 * should be called from here.
 	 */
-	if (!d)
+	if (!d) {
 		d = pci_host_bridge_of_msi_domain(bus);
-	if (!d)
+		printk(KERN_ERR "debugggg pci_host_bridge_msi_domain from of %px\n", d);
+	}
+	if (!d) {
 		d = pci_host_bridge_acpi_msi_domain(bus);
+		printk(KERN_ERR "debugggg pci_host_bridge_msi_domain from acpi %px\n", d);
+	}
 
 	/*
 	 * If no IRQ domain was found via the OF tree, try looking it up
@@ -860,9 +866,11 @@ static struct irq_domain *pci_host_bridge_msi_domain(struct pci_bus *bus)
 	if (!d) {
 		struct fwnode_handle *fwnode = pci_root_bus_fwnode(bus);
 
-		if (fwnode)
+		if (fwnode) {
 			d = irq_find_matching_fwnode(fwnode,
 						     DOMAIN_BUS_PCI_MSI);
+			printk(KERN_ERR "debugggg pci_host_bridge_msi_domain from fwnode %px\n", d);
+		}
 	}
 
 	return d;
@@ -886,6 +894,8 @@ static void pci_set_bus_msi_domain(struct pci_bus *bus)
 	if (!d)
 		d = pci_host_bridge_msi_domain(b);
 
+	printk(KERN_ERR "debugggg pci_set_bus_msi_domain for bus %u, domain %px\n",
+		   bus->number, d);
 	dev_set_msi_domain(&bus->dev, d);
 }
 
@@ -2564,6 +2574,7 @@ static struct irq_domain *pci_dev_msi_domain(struct pci_dev *dev)
 	 * the domain.
 	 */
 	d = pci_msi_get_device_domain(dev);
+	printk(KERN_ERR "debugggg pci_dev_msi_domain got %px\n", d);
 	if (d)
 		return d;
 
@@ -2583,6 +2594,8 @@ static void pci_set_msi_domain(struct pci_dev *dev)
 	if (!d)
 		d = dev_get_msi_domain(&dev->bus->dev);
 
+	printk(KERN_ERR "debugggg pci_set_msi_domain for bus %u, devfn %u, vendor %u, device %u, domain %px\n",
+		   dev->bus->number, dev->devfn, dev->vendor, dev->device, d);
 	dev_set_msi_domain(&dev->dev, d);
 }
 
@@ -2627,6 +2640,9 @@ void pci_device_add(struct pci_dev *dev, struct pci_bus *bus)
 
 	/* Set up MSI IRQ domain */
 	pci_set_msi_domain(dev);
+	// above pci_set_msi_domain walk thought the parent hierachy and use msi-map property.
+	printk(KERN_ERR "debugggg in pci_device_add: pci_set_msi_domain got domain %px for dev devfn %u, vendor %u, device %u\n",
+		   dev->dev.msi.domain, dev->devfn, dev->vendor, dev->device);
 
 	/* Notifier could use PCI capabilities */
 	dev->match_driver = false;
