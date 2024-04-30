@@ -90,8 +90,11 @@ static int its_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
 	 * your devices are aliasing to DevID 0, consider fixing your HW.
 	 */
 	nvec = max(nvec, alias_count);
-	if (!info->scratchpad[0].ul)
-		minnvec = 32;
+	if (!info->scratchpad[0].ul) {
+		// TODO(liwanli): hack to test virq to hwirq mapping with its lpi
+		//minnvec = 32
+		minnvec = 16;
+	}
 	nvec = max_t(int, minnvec, roundup_pow_of_two(nvec));
 	return msi_info->ops->msi_prepare(domain->parent, dev, nvec, info);
 }
