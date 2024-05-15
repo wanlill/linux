@@ -248,6 +248,7 @@
 				<0 0 0 4 &pcie0_intc 3>;
 		max-link-speed = <1>;
 		msi-map = <0x0 &its 0x0 0x1000>;
+		msi-map-mask = <0x0>; // hack to for DevID not wired case
 		phys = <&pcie_phy 0>, <&pcie_phy 1>,
 		       <&pcie_phy 2>, <&pcie_phy 3>;
 		phy-names = "pcie-phy-0", "pcie-phy-1",
